@@ -1,1 +1,3 @@
 pytest==7.4.3
+pytest-image-diff==0.0.11
+ImageHash==4.3.1

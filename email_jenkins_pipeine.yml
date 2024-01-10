@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Print ENV variables') {
+            steps {
+                echo "Build number is: ${env.BUILD_NUMBER}"
+                echo "Build id: ${env.BUILD_ID}"
+                echo "The job name: ${env.JOB_NAME}"
+            }
+        }
+
+        stage('CheckOut Code') {
+            steps {
+                checkout scm: [$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/SviatoslavKovalchuk/email_stuff.git']]]
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Run PyTest tests
+                    sh 'python3 -m pytest --verbose --junit-xml=test-results.xml'
+                }
+            }
+        }
+
+        stage('Publish JUnit Report') {
+            steps {
+                junit allowEmptyResults: true, testResults: 'test-results.xml', skipPublishingChecks: true, skipMarkingBuildUnstable: true
+            }
+        }
+    }
+}

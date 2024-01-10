@@ -1,7 +1,11 @@
 import email
 import imaplib
-
+from user_data import user_data
 import pytest
+from CONSTANTS import ROOT_DIR
+import os
+
+abs_path_of_base_image_to_compare = f'{ROOT_DIR}/base_image_to_compare.jpeg'
 
 
 @pytest.fixture
@@ -39,4 +43,36 @@ def email_parser(login_to_ukr_net_via_imap):
         emails = email.message_from_bytes(data[0][1])
         emails_list.append(emails)
     if emails_list:
-        return emails_list[-1]
+        return emails_list[-2]
+
+
+@pytest.fixture
+def base_image_to_compare():
+    return abs_path_of_base_image_to_compare
+
+
+@pytest.fixture
+def download_attachment_from_email():
+    imap_gmail_server = imaplib.IMAP4_SSL('imap.ukr.net.', 993)
+    imap_gmail_server.login(
+        user_data.ukr_net_user_mail,
+        user_data.ukr_net_password)
+    imap_gmail_server.select()
+    _, messages = imap_gmail_server.search(
+        None,
+        '(SUBJECT "IMAGE WITH ATTACHMENT IN BODY")')
+    for num in messages[0].split():
+        _, data = imap_gmail_server.fetch(num, '(RFC822)')
+        emails = email.message_from_bytes(data[0][1])
+        if emails.is_multipart():
+            for part in emails.walk():
+                if part.get_content_type().startswith('image/'):
+                    attachment_file_from_body = part.get_filename()
+                    attachment_path = os.path.join(f'{ROOT_DIR}/downloads', attachment_file_from_body)
+                    fp = open(attachment_path, 'wb')
+                    fp.write(part.get_payload(decode=True))
+                    fp.close()
+                    yield attachment_path
+                    os.remove(attachment_path)
+    imap_gmail_server.close()
+    imap_gmail_server.logout()

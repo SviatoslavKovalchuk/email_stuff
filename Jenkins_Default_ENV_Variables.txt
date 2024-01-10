@@ -1,0 +1,46 @@
+Workspace name
+For example: we recommend that the Workspace name uses at least the following variables to help identify your builds:
+
+jenkins-${NODE_NAME}-${JOB_NAME}-${EXECUTOR_NUMBER}
+
+NODE_NAME - Name of the "slave" or "master" the job is built on, such as linux.
+JOB_NAME - Name of the project of this build, such as "foo"
+EXECUTOR_NUMBER - The unique number that identifies the current executor.
+Note
+The EXECUTOR_NUMBER variable is not required if concurrent builds are disabled because they might cause the job to create multiple workspaces when you only want one workspace created.
+
+If the job is called 'foo' and it is built on a slave called 'linux' the variables expand the name to: jenkins-linux-foo
+
+Multiple Syncs
+If you need more than one sync task in a script you MUST use a different workspace name.
+
+You can control this by customizing the Workspace Name Format field. The default value is jenkins-${NODE_NAME}-${JOB_NAME}-${EXECUTOR_NUMBER} and will not appear in the generated snippet, however if you change this to jenkins-${NODE_NAME}-${JOB_NAME}-${EXECUTOR_NUMBER}-libs you will see a new attribute in the snippet format: 'jenkins-${NODE_NAME}-${JOB_NAME}-${EXECUTOR_NUMBER}-libs'.
+
+Built in environment variables
+Jenkins provides a set of environment variables. You can also define your own. Here is a list of built in environment variables:
+
+BUILD_NUMBER - The current build number. For example "153"
+BUILD_ID - The current build id. For example "2018-08-22_23-59-59"
+BUILD_DISPLAY_NAME - The name of the current build. For example "#153".
+JOB_NAME - Name of the project of this build. For example "foo"
+BUILD_TAG - String of "jenkins-${JOB_NAME}-${BUILD_NUMBER}".
+EXECUTOR_NUMBER - The unique number that identifies the current executor.
+NODE_NAME - Name of the "slave" or "master". For example "linux".
+NODE_LABELS - Whitespace-separated list of labels that the node is assigned.
+WORKSPACE - Absolute path of the build as a workspace.
+JENKINS_HOME - Absolute path on the master node for Jenkins to store data.
+JENKINS_URL - URL of Jenkins. For example http://server:port/jenkins/
+BUILD_URL - Full URL of this build. For example http://server:port/jenkins/job/foo/15/
+JOB_URL - Full URL of this job. For example http://server:port/jenkins/job/foo/
+Perforce environment variables
+Helix Plugin for Jenkins provides a set of Perforce environment variables.
+
+P4_CHANGELIST - The last Perforce changelist number included in the populated workspace.
+P4_CLIENT - The Perforce client workspace name. Equivalent to jenkins-${NODE_NAME}-${JOB_NAME}-${EXECUTOR_NUMBER}.
+P4_PORT - The Perforce Helix Server connection port. For example "perforce:1666".
+P4_ROOT - The Perforce client workspace root path.
+P4_USER - The Perforce username.
+P4_TICKET - A valid Perforce ticket (if the credential is valid).
+P4_REVIEW - The Swarm Review ID.
+P4_REVIEW_TYPE - The Swarm Review Type ('shelved' or 'committed').
+HUDSON_CHANGELOG_FILE - Location of the changelog file.

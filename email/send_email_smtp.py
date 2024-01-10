@@ -4,7 +4,7 @@ from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import user_data
+from user_data import user_data
 
 UNIQUE_SUBJECT_ID = random.randint(1111, 99999)
 
