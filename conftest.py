@@ -4,8 +4,10 @@ from user_data import user_data
 import pytest
 from CONSTANTS import ROOT_DIR
 import os
+from selenium import webdriver
 
-abs_path_of_base_image_to_compare = f'{ROOT_DIR}/base_image_to_compare.jpeg'
+abs_path_of_base_image_to_compare = f'{ROOT_DIR}/images/base_image_to_compare.jpeg'
+abs_path_to_google_img = f'{ROOT_DIR}/images/google_logo.png'
 
 
 @pytest.fixture
@@ -52,6 +54,11 @@ def base_image_to_compare():
 
 
 @pytest.fixture
+def google_image_to_compare():
+    return abs_path_to_google_img
+
+
+@pytest.fixture
 def download_attachment_from_email():
     imap_gmail_server = imaplib.IMAP4_SSL('imap.ukr.net.', 993)
     imap_gmail_server.login(
@@ -69,10 +76,17 @@ def download_attachment_from_email():
                 if part.get_content_type().startswith('image/'):
                     attachment_file_from_body = part.get_filename()
                     attachment_path = os.path.join(f'{ROOT_DIR}/downloads', attachment_file_from_body)
-                    fp = open(attachment_path, 'wb')
-                    fp.write(part.get_payload(decode=True))
-                    fp.close()
+                    with open(attachment_path, 'wb') as file:
+                        file.write(part.get_payload(decode=True))
                     yield attachment_path
                     os.remove(attachment_path)
     imap_gmail_server.close()
     imap_gmail_server.logout()
+
+
+@pytest.fixture
+def create_driver_and_login():
+    driver = webdriver.Chrome()
+    driver.get("https://www.google.com.ua/?hl=uk")
+    yield driver
+    driver.quit()

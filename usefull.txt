@@ -1,3 +1,8 @@
 How to Send Emails Using Python - Plain Text, Adding Attachments, HTML Emails, and More == https://www.youtube.com/watch?v=JRCJ6RtE3xU
 
-jenkins http://localhost:8080/    617d483fa77b49518ef42ce7a2d5210d
+jenkins http://localhost:8080/    0f96d06b69824c5baef93ad050a94a6d
+
+
+
+docker ps == check doker status
+docker exec -it -u 0 148c2d03558e /bin/bash == jump into container
