@@ -16,6 +16,15 @@ pipeline {
             }
         }
 
+        stage('Print Current Directory') {
+            steps {
+                script {
+                    // Print current directory
+                    sh 'pwd'
+                }
+            }
+        }
+
         stage('Run Tests') {
             steps {
                 script {
