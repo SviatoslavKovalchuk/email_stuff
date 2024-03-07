@@ -1,11 +1,23 @@
-name: Full_regression_schedule_and_push
+name: Full_Regression_Manual
 
+#on:
+#  push:
+#    branches:
+#      - "master" # Will start the job every time after push into master branch
+#  schedule:
+#    - cron: "0 0 * * *" # Automatic start to run the job at the scheduled time at 00:00 UTC
 on:
-  push:
-    branches:
-      - "master"
-  schedule:
-    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
 
 permissions:
   contents: read
@@ -33,9 +45,6 @@ jobs:
       - name: Run tests
         run: |
           python pytest -n 2 --dist loadgroup --verbose --junit-xml=test-results.xml
-#      - name: Lint code with Pylint
-#        run: |
-#          pylint --rcfile=.pylintrc tests
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
         if: always()
