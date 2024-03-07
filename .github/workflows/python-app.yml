@@ -1,11 +1,5 @@
 name: Full_Regression_Manual
 
-#on:
-#  push:
-#    branches:
-#      - "master" # Will start the job every time after push into master branch
-#  schedule:
-#    - cron: "0 0 * * *" # Automatic start to run the job at the scheduled time at 00:00 UTC
 on:
   workflow_dispatch:
     inputs:
@@ -15,9 +9,9 @@ on:
         default: 'warning'
         type: choice
         options:
-        - info
-        - warning
-        - debug
+          - info
+          - warning
+          - debug
 
 permissions:
   contents: read
@@ -30,14 +24,21 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
           python-version: "3.10"
       - name: Install Chrome and WebDriver
         run: |
-            brew install --cask google-chrome
+          sudo apt update
+          sudo apt install -y google-chrome-stable
+          CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
+          curl -sS -o chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+          sudo unzip chromedriver_linux64.zip -d /usr/local/bin
+          sudo chmod +x /usr/local/bin/chromedriver
+          rm chromedriver_linux64.zip
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
